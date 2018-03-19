@@ -3,6 +3,8 @@
 namespace CRC
 {
     /// <summary>Расчёт CRC</summary>
+    /// http://sunshine2k.de/coding/javascript/crc/crc_js.html
+    /// http://crccalc.com/
     static public class CRC
     {
         /// <summary>
@@ -56,8 +58,9 @@ namespace CRC
         /// Табличный метод расчёта CRC32 для polynomial = 0x04C11DB7, initialValue = 0xFFFFFFFF
         /// </summary>
         /// <param name="Buf"></param>
+        /// <param name="initialValue"></param>
         /// <returns></returns>
-        public static UInt32 CalcCRC2(byte[] Buf)
+        public static UInt32 CRC32_Table(uint[] Buf, UInt32 initialValue = 0xFFFFFFFF)
         {
             UInt32[] CrcTable = new UInt32[16]
             { //Nibble lookup table for 0x04C11DB7 polynomial
@@ -68,18 +71,15 @@ namespace CRC
             };
             UInt32 _CRC32 = 0;
 
-            UInt32[] _Buf = new UInt32[Buf.Length / 4];
-            Buffer.BlockCopy(Buf, 0, _Buf, 0, Buf.Length);
-
             bool Flag = true;
             if (Flag)
-                _CRC32 = 0xFFFFFFFF;
+                _CRC32 = initialValue;
 
             int i = 0;
-            int len = _Buf.Length;
+            int len = Buf.Length;
             while ((len--) != 0)
             {
-                _CRC32 ^= _Buf[i++];
+                _CRC32 ^= Buf[i++];
                 //Process 32-bits, 4 at a time, or 8 rounds
                 _CRC32 = (_CRC32 << 4) ^ CrcTable[_CRC32 >> 28]; //Assumes 32-bit reg, masking index to 4-bits
                 _CRC32 = (_CRC32 << 4) ^ CrcTable[_CRC32 >> 28]; //0x04C11DB7 Polynomial used in STM32
