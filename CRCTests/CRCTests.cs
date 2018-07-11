@@ -75,6 +75,20 @@ namespace CRC.Tests
         }
 
         [TestMethod()]
+        public void CRC32ByteTest2()
+        {
+            byte[] byteBuffer = new byte[] { 170, 4, 0, 0, 0, 0, 0, 0 };
+
+            uint result;
+
+            //CRC-32/MPEG-2
+            //poly = 0x04C11DB7;
+            //initValue = 0xFFFFFFFF;
+            result = 0x5C857C0A;
+            Assert.AreEqual(result, CRC.CRC32Byte(byteBuffer, 0, byteBuffer.Length - 4));
+        }
+
+        [TestMethod()]
         public void CRC32ByteTest_7Bytes()
         {
             byte[] byteBuffer = new byte[] { 0x34, 0x33, 0x32, 0x31, 0x38, 0x37, 0x36 };

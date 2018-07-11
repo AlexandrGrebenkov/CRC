@@ -122,13 +122,13 @@ namespace CRC
             if (rest != 0) arraySize++;
             var array = new byte[arraySize * 4];
             Buffer.BlockCopy(Buf, offset, array, 0, lenth);
-            for (int i = Buf.Length; i < arraySize * 4; i++)
+            for (int i = lenth; i < arraySize * 4; i++)
             {
                 array[i] = 0xFF;
             }
 
             var arrayU32 = new UInt32[arraySize];
-            Buffer.BlockCopy(Buf, 0, arrayU32, 0, Buf.Length);
+            Buffer.BlockCopy(array, 0, arrayU32, 0, array.Length);
 
             return CRC32(arrayU32, polynomial, initialValue);
         }
