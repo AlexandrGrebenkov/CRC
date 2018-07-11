@@ -23,8 +23,8 @@ namespace CRC
         /// Метод расчёта CRC32
         /// </summary>
         /// <param name="Buf">Расчётный массив</param>
-        /// <param name="offset">Индекс первого байта в массиве</param>
-        /// <param name="lenth">Расчётная длина</param>
+        /// <param name="offset">Индекс первого UInt32 в массиве</param>
+        /// <param name="lenth">Расчётная длина в UInt32</param>
         /// <param name="polynomial">Полином</param>
         /// <param name="initialValue">Начальное значение</param>
         /// <returns></returns>
@@ -39,7 +39,7 @@ namespace CRC
 
             UInt32 CRC = initialValue;
 
-            for (int i = 0; i < Buf.Length; i++)
+            for (int i = offset; i < lenth; i++)
             {
                 CRC ^= Buf[i];
                 for (int j = 0; j < 32; j++)
@@ -93,16 +93,35 @@ namespace CRC
             return _CRC32;
         }
 
+        /// <summary>
+        /// Метод расчёта CRC32 для байт-массива любого размера
+        /// </summary>
+        /// <param name="Buf"></param>
+        /// <returns></returns>
         public static UInt32 CRC32Byte(byte[] Buf)
         {
-            int num = Buf.Length;
+            return CRC32Byte(Buf, 0, Buf.Length);
+        }
+
+        /// <summary>
+        /// Метод расчёта CRC32 для байт-массива любого размера
+        /// </summary>
+        /// <param name="Buf">Массив</param>
+        /// <param name="offset">Смещение в байтах (Откуда начинать)</param>
+        /// <param name="lenth">Длина расчёта в байтах</param>
+        /// <param name="polynomial">Полином</param>
+        /// <param name="initialValue">Начальное значение</param>
+        /// <returns></returns>
+        public static UInt32 CRC32Byte(byte[] Buf, int offset, int lenth, UInt32 polynomial = 0x04C11DB7, UInt32 initialValue = 0xFFFFFFFF)
+        {
+            int num = lenth;
             int words = num / 4;                 // кол-во слов
             int rest = num % 4;                  // кол-во оставшихся байт
 
             int arraySize = words;
             if (rest != 0) arraySize++;
             var array = new byte[arraySize * 4];
-            Buffer.BlockCopy(Buf, 0, array, 0, Buf.Length);
+            Buffer.BlockCopy(Buf, offset, array, 0, lenth);
             for (int i = Buf.Length; i < arraySize * 4; i++)
             {
                 array[i] = 0xFF;
@@ -111,7 +130,7 @@ namespace CRC
             var arrayU32 = new UInt32[arraySize];
             Buffer.BlockCopy(Buf, 0, arrayU32, 0, Buf.Length);
 
-            return CRC32(arrayU32);
+            return CRC32(arrayU32, polynomial, initialValue);
         }
     }
 }
