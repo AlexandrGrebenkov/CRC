@@ -124,7 +124,7 @@ namespace CRC
             Buffer.BlockCopy(Buf, offset, array, 0, lenth);
             for (int i = lenth; i < arraySize * 4; i++)
             {
-                array[i] = 0xFF;
+                array[i] = 0x00;
             }
 
             var arrayU32 = new UInt32[arraySize];
