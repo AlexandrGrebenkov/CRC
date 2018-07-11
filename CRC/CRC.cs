@@ -92,5 +92,26 @@ namespace CRC
             }
             return _CRC32;
         }
+
+        public static UInt32 CRC32Byte(byte[] Buf)
+        {
+            int num = Buf.Length;
+            int words = num / 4;                 // кол-во слов
+            int rest = num % 4;                  // кол-во оставшихся байт
+
+            int arraySize = words;
+            if (rest != 0) arraySize++;
+            var array = new byte[arraySize * 4];
+            Buffer.BlockCopy(Buf, 0, array, 0, Buf.Length);
+            for (int i = Buf.Length; i < arraySize * 4; i++)
+            {
+                array[i] = 0xFF;
+            }
+
+            var arrayU32 = new UInt32[arraySize];
+            Buffer.BlockCopy(Buf, 0, arrayU32, 0, Buf.Length);
+
+            return CRC32(arrayU32);
+        }
     }
 }
